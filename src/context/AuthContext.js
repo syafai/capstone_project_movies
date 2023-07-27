@@ -1,47 +1,52 @@
-import React, { useContext, useState, useEffect } from "react"
-import firebase from './firebase';
+import { createContext, useContext, useEffect, useState } from "react";
+import {
+  createUserWithEmailAndPassword,
+  onAuthStateChanged,
+  signOut,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
+import auth from "../firebase";
 
-const AuthContext = React.createContext()
+const AuthContext = createContext();
 
-export function useAuth() {
-  return useContext(AuthContext)
-}
+export default function AuthProvider({ children }) {
+  const [currentUser, setCurrentUser] = useState();
+  const [loading, setLoading] = useState(true);
 
-export function AuthProvider({ children }) {
-  const [currentUser, setCurrentUser] = useState()
-  const [loading, setLoading] = useState(true)
+  const signup = (email, password) => {
+    return createUserWithEmailAndPassword(auth, email, password);
+  };
+  const login = (email, password) => {
+    return signInWithEmailAndPassword(auth, email, password);
+  };
+  const logOut = () => {
+    return signOut(auth);
+  };
 
-  function signup(email, password) {
-    return auth.createUserWithEmailAndPassword(email, password)
-  }
-
-  function login(email, password) {
-    return auth.signInWithEmailAndPassword(email, password)
-  }
-
-  function logout() {
-    return auth.signOut()
-  }
-
+ 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(user => {
-      setCurrentUser(user)
-      setLoading(false)
-    })
-
-    return unsubscribe
-  }, [])
-
-  const value = {
-    currentUser,
-    login,
-    signup,
-    logout,
-  }
-
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setCurrentUser(user);
+      setLoading(false);
+    });
+    return () => {
+      unsubscribe();
+    };
+  }, []);
   return (
-    <AuthContext.Provider value={value}>
+    <AuthContext.Provider
+      value={{
+        currentUser,
+        signup,
+        logOut,
+        login,
+      }}
+    >
       {!loading && children}
     </AuthContext.Provider>
-  )
+  );
 }
+
+export const useAuth = () => {
+  return useContext(AuthContext);
+};

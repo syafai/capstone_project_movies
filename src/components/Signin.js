@@ -3,7 +3,7 @@ import { Form, Button, Card, Alert } from "react-bootstrap"
 import { useAuth } from "../context/AuthContext"
 import { Link, useNavigate } from "react-router-dom"
 
-export default function Login() {
+function Signin() {
   const emailRef = useRef()
   const passwordRef = useRef()
   const { login } = useAuth()
@@ -18,7 +18,7 @@ export default function Login() {
       setError("")
       setLoading(true)
       await login(emailRef.current.value, passwordRef.current.value)
-      navigate.push("/watchlist")
+      navigate("/watchlist")
     } catch {
       setError("Failed to sign in")
     }
@@ -51,5 +51,7 @@ export default function Login() {
         Need an account? <Link to="/signup">Sign Up</Link>
       </div>
     </>
-  )
+  );
 }
+
+export default Signin;

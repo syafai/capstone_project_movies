@@ -3,7 +3,7 @@ import { Form, Button, Card, Alert } from "react-bootstrap"
 import { useAuth } from "../context/AuthContext"
 import { Link, useNavigate } from "react-router-dom"
 
-export default function Signup() {
+function Signup() {
   const emailRef = useRef()
   const passwordRef = useRef()
   const passwordConfirmRef = useRef()
@@ -12,7 +12,7 @@ export default function Signup() {
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
 
-  async function handleSubmit(e) {
+const handleSubmit = async (e) => {
     e.preventDefault()
 
     if (passwordRef.current.value !== passwordConfirmRef.current.value) {
@@ -23,7 +23,7 @@ export default function Signup() {
       setError("")
       setLoading(true)
       await signup(emailRef.current.value, passwordRef.current.value)
-      navigate.push("/watchlist")
+      navigate("/watchlist")
     } catch {
       setError("Failed to create an account")
     }
@@ -62,3 +62,5 @@ export default function Signup() {
     </>
   )
 }
+
+export default Signup;

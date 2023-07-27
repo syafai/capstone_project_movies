@@ -12,7 +12,7 @@ export const Header = () => {
 
                 <ul className='nav-links'>
                     <li>
-                        <Link to='/'>Watch List</Link>
+                        <Link to='/watchlist'>Watch List</Link>
                     </li>
 
                     <li>
@@ -32,7 +32,7 @@ export const Header = () => {
                     </li>
 
                     <li>
-                        <Link to='/signout' className='btn'>Sign-In</Link>
+                        <Link to='/signin' className='btn'>Sign-Out</Link>
                     </li>
                 </ul>
             </div>

@@ -1,7 +1,7 @@
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
+import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
 
-export const firebaseConfig = {
+ const firebaseConfig = {
     apiKey: "AIzaSyBj_-YYbXiYOiAbqo9Ru_yZzkxoC6WJxA0",
     authDomain: "movie-project-92781.firebaseapp.com",
     projectId: "movie-project-92781",
@@ -10,7 +10,7 @@ export const firebaseConfig = {
     appId: "1:135871199020:web:61d5b1d013e1aaaa2a1e89"
   };
 
-  firebase.initializeApp(firebaseConfig);
-
-
-  export default firebase;
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  
+  export default auth;
