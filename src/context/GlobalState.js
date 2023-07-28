@@ -1,41 +1,46 @@
 import React, {createContext, useReducer, useEffect, useState} from 'react';
 import AppReducer from './AppReducer';
+import  {useAuth} from "./AuthContext";
+import { loadWatchlist, saveWatchlist} from "../firebase";
 
 const initialState = {
     watchlist: [],
     watched: []
-};
 
+};
 export const GlobalContext = createContext(initialState);
 
 
 export const GlobalProvider = props => {
+    const {currentUser} = useAuth()
     const [state, dispatch] = useReducer(AppReducer, initialState)
-
     const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
-
+    const [isLoading, setIsLoading] = useState(true)
     useEffect(() => {
-        if(currentUser)
-        // Check if the user is logged in
-        // For example, you can use your authentication context to determine if the user is logged in
-        // For the sake of example, I am using a boolean state 'isUserLoggedIn'
-        // Replace 'isUserLoggedIn' with the actual value from your authentication context
-        setIsUserLoggedIn(true); // Set to true if the user is logged in, otherwise false
-    }, []);
+       setIsUserLoggedIn(currentUser);
+       if(currentUser){
+           loadWatchlist(currentUser.email).then((data)=> {
+               console.log(data)
+               dispatch({type: "LOAD_LIST", payload: data})
+               setIsLoading(false)
+           })
+       }
+       // Set to true if the user is logged in, otherwise false
+    }, [currentUser]);
 
     useEffect(() => {
         if (!isUserLoggedIn) {
             // Clear local storage and reset state when the user signs out or a new user logs in
-            localStorage.removeItem('watchlist');
-            localStorage.removeItem('watched');
             dispatch({ type: "RESET_STATE" });
         }
     }, [isUserLoggedIn]);
 
-useEffect(() => {
-        localStorage.setItem('watchlist', JSON.stringify(state.watchlist));
-        localStorage.setItem('watched', JSON.stringify(state.watched));
-    }, [state]);
+    useEffect(() => {
+            if(!isLoading) {
+                saveWatchlist(currentUser.email, state.watchlist, state.watched)
+                    .then((data) => console.log(data))
+            }
+        }, [state]);
     
     const addMovieToWatchlist = (movie) => {
         dispatch({ type: "ADD_MOVIE_TO_WATCHLIST", payload: movie})
